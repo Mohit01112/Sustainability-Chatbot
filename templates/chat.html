@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Chat | Sustainability Chatbot</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+
+<header class="border-b border-gray-100">
+<nav class="flex items-center justify-between px-6 py-4 lg:px-8">
+<div class="flex items-center gap-3">
+<a class="rounded-full border border-gray-200 p-2 hover:bg-gray-50" href="{{ url_for('home') }}">
+<svg class="h-4 w-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+<div>
+<p class="text-sm font-semibold text-gray-900">Sustainability Chatbot</p>
+<p class="text-xs text-gray-500">Sustainability Document Assistant</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+<svg class="h-3 w-3" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"></circle></svg>
+Archive ready
+</span>
+</nav>
+</header>
+
+<main class="flex-1 flex justify-center px-4 py-8">
+<div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 border border-emerald-100 flex flex-col" style="height: 78vh;">
+
+<div class="text-center px-8 pt-8 pb-6 border-b border-gray-100">
+<h2 class="text-2xl font-bold text-gray-900">Ask a question</h2>
+<p class="mt-1 text-sm text-gray-500">Answers are grounded in the PDFs on file and link back to their source page.</p>
+</div>
+
+<div id="messages" class="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+<div id="emptyState" class="text-center py-10">
+<p class="text-sm text-gray-500 mb-4">Try one of these to get started:</p>
+<div class="flex flex-wrap justify-center gap-2">
+<button type="button" class="chip rounded-full border border-gray-200 px-4 py-2 text-xs text-gray-600 hover:border-emerald-400 hover:text-emerald-700" data-prompt="What are the company's emissions reduction targets?">Emissions reduction targets</button>
+<button type="button" class="chip rounded-full border border-gray-200 px-4 py-2 text-xs text-gray-600 hover:border-emerald-400 hover:text-emerald-700" data-prompt="How is water usage being managed?">Water usage management</button>
+<button type="button" class="chip rounded-full border border-gray-200 px-4 py-2 text-xs text-gray-600 hover:border-emerald-400 hover:text-emerald-700" data-prompt="What renewable energy commitments are mentioned?">Renewable energy commitments</button>
+</div>
+</div>
+</div>
+
+<form id="composerForm" class="border-t border-gray-100 p-4 flex items-end gap-2">
+<textarea id="questionInput" rows="1" placeholder="Ask a question about your sustainability reports…" class="flex-1 resize-none rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-emerald-600 text-sm"></textarea>
+<button id="sendBtn" type="submit" disabled class="rounded-md bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-40 disabled:cursor-not-allowed">Send</button>
+</form>
+
+</div>
+</main>
+
+<script>
+(function () {
+  const messages = document.getElementById("messages");
+  const emptyState = document.getElementById("emptyState");
+  const form = document.getElementById("composerForm");
+  const input = document.getElementById("questionInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  function updateSendState() {
+    sendBtn.disabled = input.value.trim().length === 0;
+  }
+
+  input.addEventListener("input", updateSendState);
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  document.querySelectorAll(".chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      input.value = chip.dataset.prompt || "";
+      updateSendState();
+      form.requestSubmit();
+    });
+  });
+
+  function scrollToBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function addUserMessage(text) {
+    if (emptyState) emptyState.remove();
+    const div = document.createElement("div");
+    div.className = "flex justify-end";
+    div.innerHTML = '<div class="max-w-[80%] rounded-2xl rounded-br-sm bg-emerald-700 text-white px-4 py-2.5 text-sm"></div>';
+    div.firstChild.textContent = text;
+    messages.appendChild(div);
+    scrollToBottom();
+  }
+
+  function addThinking() {
+    const div = document.createElement("div");
+    div.className = "flex justify-start";
+    div.id = "thinkingMsg";
+    div.innerHTML = '<div class="max-w-[80%] rounded-2xl rounded-bl-sm bg-gray-50 border border-gray-100 text-gray-500 px-4 py-2.5 text-sm italic">Reading the archive…</div>';
+    messages.appendChild(div);
+    scrollToBottom();
+  }
+
+  function addAssistantMessage(answer, sourceUrl) {
+    const thinking = document.getElementById("thinkingMsg");
+    if (thinking) thinking.remove();
+
+    const wrap = document.createElement("div");
+    wrap.className = "flex justify-start";
+
+    const bubble = document.createElement("div");
+    bubble.className = "max-w-[80%] rounded-2xl rounded-bl-sm bg-gray-50 border border-gray-100 text-gray-900 px-4 py-2.5 text-sm";
+    bubble.textContent = answer;
+    wrap.appendChild(bubble);
+
+    if (sourceUrl) {
+      const outer = document.createElement("div");
+      outer.className = "flex flex-col items-start gap-1";
+      outer.appendChild(bubble);
+      const link = document.createElement("a");
+      link.href = sourceUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.className = "text-xs text-emerald-700 hover:text-emerald-900 underline";
+      link.textContent = "View source page →";
+      outer.appendChild(link);
+      wrap.innerHTML = "";
+      wrap.appendChild(outer);
+    }
+
+    messages.appendChild(wrap);
+    scrollToBottom();
+  }
+
+  async function askQuestion(question) {
+    addThinking();
+    try {
+      const res = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: question })
+      });
+      const data = await res.json();
+      addAssistantMessage(data.answer || "Sorry, something went wrong. Please try again.", data.source || null);
+    } catch (err) {
+      const thinking = document.getElementById("thinkingMsg");
+      if (thinking) thinking.remove();
+      addAssistantMessage("Couldn't reach the assistant. Check your connection and try again.", null);
+    }
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const question = input.value.trim();
+    if (!question) return;
+    addUserMessage(question);
+    input.value = "";
+    updateSendState();
+    askQuestion(question);
+  });
+})();
+</script>
+
+</body>
+</html>

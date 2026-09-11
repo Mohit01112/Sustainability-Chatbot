@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Sustainability Chatbot</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<section>
+<div class="bg-white">
+<div class="relative isolate overflow-hidden bg-gradient-to-b from-emerald-300/20">
+<div class="mx-auto max-w-7xl pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:py-40">
+<div class="px-6 lg:px-0 lg:pt-4">
+<div class="mx-auto max-w-2xl">
+<div class="max-w-lg">
+<div class="mt-24 sm:mt-32 lg:mt-16">
+<a class="inline-flex items-center space-x-2" href="#">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+<circle cx="16" cy="16" r="14.5" stroke="#059669" stroke-width="1.4"></circle>
+<circle cx="16" cy="16" r="9" stroke="#059669" stroke-width="1.4"></circle>
+<circle cx="16" cy="16" r="3.2" fill="#b45309"></circle>
+</svg>
+<span class="text-sm font-medium leading-6 text-gray-600">Sustainability Chatbot</span>
+</a>
+</div>
+<h1 class="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Ask your reports&nbsp;a&nbsp;question.</h1>
+<p class="mt-6 text-lg leading-8 text-gray-600">Sustainability Chatbot reads the sustainability and ESG PDFs in your archive, then answers in plain language — pointing back to the exact page so you can verify every claim yourself.</p>
+<div class="mt-10">
+<a class="rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700" href="{{ url_for('chat') }}">Start asking →</a>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-20 sm:mt-64 md:mx-auto md:max-w-2xl lg:mx-0 lg:mt-0 lg:w-screen flex flex-col justify-center items-center bg-emerald-700 rounded-tr-full rounded-bl-full">
+<div class="px-6 pt-24 pb-16 sm:pt-32 text-center">
+<p class="text-white/90 text-sm font-medium tracking-wide uppercase mb-4">How it works</p>
+<div class="space-y-5 text-left max-w-xs mx-auto">
+<div class="flex gap-3">
+<span class="text-emerald-200 font-mono text-sm">01</span>
+<p class="text-white text-sm">Your PDFs are indexed and split into searchable passages.</p>
+</div>
+<div class="flex gap-3">
+<span class="text-emerald-200 font-mono text-sm">02</span>
+<p class="text-white text-sm">Your question retrieves only the most relevant passages.</p>
+</div>
+<div class="flex gap-3">
+<span class="text-emerald-200 font-mono text-sm">03</span>
+<p class="text-white text-sm">The answer links straight back to its source page.</p>
+</div>
+</div>
+</div>
+<div aria-hidden="true" class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/10 md:rounded-3xl"></div>
+</div>
+</div>
+<div class="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-white sm:h-32"></div>
+</div>
+</div>
+</section>
+</body>
+</html>
